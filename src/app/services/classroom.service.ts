@@ -17,7 +17,7 @@ export class ClassroomService {
   }
 
   // Récupérer une salle de classe par son ID
-  getClassroomById(id: number): Observable<Classroom> {
+  getClassroomById(id: string): Observable<Classroom> {
     return this.http.get<Classroom>(`${this.baseUrl}${id}`);
   }
 
@@ -27,12 +27,12 @@ export class ClassroomService {
   }
 
   // Mettre à jour une salle de classe existante
-  updateClassroom(id: number, classroom: Classroom): Observable<Classroom> {
+  updateClassroom(id: string, classroom: Classroom): Observable<Classroom> {
     return this.http.patch<Classroom>(`${this.baseUrl}${id}`, classroom);
   }
 
   // Supprimer une salle de classe
-  deleteClassroom(id: number): Observable<void> {
+  deleteClassroom(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}${id}`);
   }
 }

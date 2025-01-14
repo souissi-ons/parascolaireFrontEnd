@@ -97,7 +97,7 @@ export class ClassroomComponent implements OnInit, AfterViewInit {
 
   updateClassroom(updatedClassroom: Classroom): void {
     this.classroomService
-      .updateClassroom(updatedClassroom.id || 0, updatedClassroom)
+      .updateClassroom(updatedClassroom._id || '', updatedClassroom)
       .subscribe({
         next: (classroom) => {
           const index = this.listClassroom.findIndex(

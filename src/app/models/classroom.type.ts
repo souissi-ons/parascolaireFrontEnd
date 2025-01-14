@@ -1,5 +1,5 @@
 export type Classroom = {
-  id?: number;
+  _id?: string;
   num: string;
   capacity: number;
   available: boolean;

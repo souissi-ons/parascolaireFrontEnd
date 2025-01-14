@@ -1,0 +1,77 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <!-- Champ Full Name -->
+  <div class="form-group mt-3">
+    <label for="fullName">Name</label>
+    <input
+      type="text"
+      id="fullName"
+      class="form-control"
+      formControlName="fullName"
+      placeholder="Enter club name"
+    />
+  </div>
+  <!-- Message d'erreur pour Full Name -->
+  <div
+    *ngIf="
+      userForm.get('fullName')?.invalid && userForm.get('fullName')?.touched
+    "
+    class="invalid-feedback"
+  >
+    Name is required.
+  </div>
+
+  <!-- Champ Phone -->
+  <div class="form-group mt-3">
+    <label for="phone">Phone</label>
+    <input
+      type="text"
+      id="phone"
+      class="form-control"
+      formControlName="phone"
+      placeholder="Enter phone number"
+    />
+  </div>
+  <!-- Message d'erreur pour Phone -->
+  <div
+    *ngIf="userForm.get('phone')?.invalid && userForm.get('phone')?.touched"
+    class="invalid-feedback"
+  >
+    <div *ngIf="userForm.get('phone')?.errors?.['required']">
+      Phone number is required.
+    </div>
+    <div *ngIf="userForm.get('phone')?.errors?.['pattern']">
+      The phone number must contain exactly 8 digits.
+    </div>
+  </div>
+
+  <!-- Champ Email -->
+  <div class="form-group mt-3">
+    <label for="email">Email</label>
+    <input
+      type="email"
+      id="email"
+      class="form-control"
+      formControlName="email"
+      placeholder="Enter email"
+    />
+  </div>
+  <!-- Message d'erreur pour Email -->
+  <div
+    *ngIf="userForm.get('email')?.invalid && userForm.get('email')?.touched"
+    class="invalid-feedback"
+  >
+    <div *ngIf="userForm.get('email')?.errors?.['required']">
+      Email is required.
+    </div>
+    <div *ngIf="userForm.get('email')?.errors?.['email']">
+      The email address is not valid.
+    </div>
+  </div>
+
+  <!-- Bouton de soumission -->
+  <div class="form-group mt-3">
+    <button type="submit" class="btn btn-primary" [disabled]="userForm.invalid">
+      Submit
+    </button>
+  </div>
+</form>

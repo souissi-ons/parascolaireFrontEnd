@@ -1,0 +1,46 @@
+<ngx-spinner
+  bdColor="rgba(51,51,51,0.8)"
+  size="medium"
+  color="#fff"
+  type="ball-spin"
+>
+  <p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>
+
+<div class="container">
+  <div class="row">
+    <button
+      class="btn-add-new-club"
+      (click)="togglePopup()"
+      *ngIf="userRole === 'admin'"
+    >
+      Add New Club
+    </button>
+  </div>
+  <br />
+
+  <div class="row">
+    <div
+      class="col-lg-3"
+      *ngFor="let club of clubs"
+      (click)="navigateToClubProfile(club._id)"
+    >
+      <div class="card-club">
+        <img
+          [src]="clubImages[club._id] || '/club.avif'"
+          class="card-img-top"
+          alt="Image du club"
+        />
+        <div class="card-body">
+          <h5 class="card-title">{{ club.fullName }}</h5>
+          <h6 class="card-title">{{ club.email }}</h6>
+          <p class="card-text">{{ club.phone }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-popup [title]="'Add New Club'" [show]="showPopup" (close)="closePopup()">
+    <app-add-club (userAdded)="addClub($event)"></app-add-club>
+  </app-popup>
+</div>

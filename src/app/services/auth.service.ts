@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../models/user.type';
 import { jwtDecode } from 'jwt-decode';
-import { Router } from '@angular/router'; // Importez Router pour la redirection
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +13,7 @@ export class AuthService {
   private baseUrl = 'http://localhost:3000/auth/';
   constructor(private router: Router) {}
 
+  // Méthode pour se connecter
   login(user: User): Observable<any> {
     return this.http.post<any>(this.baseUrl + 'login', {
       email: user.email,
@@ -20,13 +21,23 @@ export class AuthService {
     });
   }
 
+  // Méthode pour récupérer l'utilisateur actuel
   getCurrentUser() {
-    const token = localStorage.getItem('access_token'); // Get the token from localStorage
+    const token = localStorage.getItem('access_token'); // Récupérez le token
 
     if (token) {
       try {
-        const decodedToken = jwtDecode(token); // Decode the token
-        return decodedToken; // Return the decoded token (contains user info)
+        const decodedToken: any = jwtDecode(token); // Décodez le token
+
+        // Vérifiez si le token est expiré
+        const currentTime = Date.now() / 1000;
+        if (decodedToken.exp && decodedToken.exp < currentTime) {
+          console.warn('Token has expired');
+          this.logout(); // Déconnectez l'utilisateur si le token est expiré
+          return null;
+        }
+
+        return decodedToken; // Retournez les informations de l'utilisateur
       } catch (error) {
         console.error('Error decoding token:', error);
         return null;
@@ -37,10 +48,11 @@ export class AuthService {
     }
   }
 
+  // Méthode pour se déconnecter
   logout(): void {
-    localStorage.removeItem('access-token'); // Supprimez le token
+    localStorage.removeItem('access_token'); // Supprimez le token
     localStorage.removeItem('userName'); // Supprimez le nom d'utilisateur
-    localStorage.removeItem('userRole'); // Supprimez le role
+    localStorage.removeItem('userRole'); // Supprimez le rôle
     this.router.navigate(['/login']); // Redirigez l'utilisateur vers la page de connexion
   }
 }

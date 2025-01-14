@@ -4,6 +4,9 @@ import { HomeComponent } from './components/home/home.component';
 import { ClassroomComponent } from './components/ManageClassrooms/classroom/classroom.component';
 import { BodyComponent } from './common/body/body.component';
 import { AuthGuard } from './services/auth-gard.service';
+import { ClubComponent } from './components/ManageClub/club/club.component';
+import { ClubProfileComponent } from './components/ManageClub/club-profile/club-profile.component';
+import { ProfileComponent } from './components/ManageClub/profile/profile.component';
 
 export const routes: Routes = [
   // Route par défaut : redirige vers la page de connexion
@@ -29,6 +32,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'home', pathMatch: 'full' },
       { path: 'home', component: HomeComponent },
       { path: 'classroom', component: ClassroomComponent },
+      { path: 'profile', component: ProfileComponent },
     ],
   },
 
@@ -38,7 +42,11 @@ export const routes: Routes = [
     component: BodyComponent,
     canActivate: [AuthGuard], // Vérifie que l'utilisateur est authentifié
     data: { role: 'club' }, // Rôle attendu pour accéder à ces routes
-    children: [{ path: '', redirectTo: 'home', pathMatch: 'full' }],
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'club', component: ClubComponent },
+      { path: 'club/:clubId', component: ClubProfileComponent },
+    ],
   },
 
   // Routes pour les étudiants
