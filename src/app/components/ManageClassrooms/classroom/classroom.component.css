@@ -1,0 +1,189 @@
+/* Base styles */
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+  padding: 0;
+}
+
+/* Modal Styles */
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  overflow-y: auto;
+}
+
+/* Card Styles */
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px rgba(1, 41, 112, 0.1);
+  overflow: hidden;
+  width: 80%;
+  max-width: 800px;
+  margin: 20px;
+  max-height: 90vh;
+}
+
+/* Card Body */
+.card-body {
+  padding: 20px;
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+/* Card Title */
+.card-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Form Control */
+.form-control {
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 14px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.form-control:focus {
+  border-color: #673ab7;
+  box-shadow: 0 0 5px rgba(103, 58, 183, 0.5);
+}
+
+/* Textarea Styles */
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* Button Styles */
+.btn {
+  border-radius: 5px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  padding: 10px 20px;
+}
+
+/* Primary Button */
+.btn-primary {
+  &:disabled {
+    background-color: #cccccc !important;
+    border-color: #bbbbbb !important;
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+
+  &:enabled {
+    background-color: #e1d8f1;
+    color: #673ab7;
+    border: none;
+    transition: all 0.3s ease;
+    &:hover {
+      background-color: #d2b8e3;
+    }
+  }
+}
+
+.btn-add-new-club {
+  background-color: #e1d8f1;
+  color: #673ab7;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 20px 0 20px auto; /* Ajoute une marge en haut et aligne à droite */
+  float: right; /* Aligne le bouton à droite */
+}
+
+.btn-add-new-club:hover {
+  background-color: #d2b8e3;
+}
+
+/* Table Styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre subtile sous le tableau */
+  border-radius: 8px; /* Ajoute des coins arrondis pour un effet plus doux */
+  background-color: #fff; /* Assure que le fond du tableau est blanc pour que l'ombre ressorte */
+}
+
+table th,
+table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #55b3ff;
+  color: #fff;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table tr:hover {
+  background-color: #ddd;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal {
+    padding: 10px;
+  }
+
+  .card {
+    width: 95%;
+    margin: 10px;
+  }
+
+  .card-body {
+    padding: 15px;
+  }
+
+  .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-control {
+    font-size: 12px;
+  }
+
+  .btn-primary {
+    font-size: 14px;
+  }
+
+  .card-title {
+    font-size: 16px;
+  }
+}
+
+/* classroom.component.css */
+.clickable-row:hover {
+  cursor: pointer; /* Change le curseur en main (pointer) */
+  background-color: #f5f5f5; /* Optionnel : Ajoute un fond légèrement gris au survol */
+}

@@ -12,6 +12,7 @@ import { faUser, faEnvelope, faLock } from '@fortawesome/free-solid-svg-icons';
 import { NgxSpinnerService, NgxSpinnerModule } from 'ngx-spinner';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { AuthService } from '../../services/auth.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-login',
@@ -59,8 +60,43 @@ export class LoginComponent implements OnInit {
           next: (response: any) => {
             this.loginError = false;
             console.log('Login response', response);
-            localStorage.setItem('access_token', response.access_token);
-            return this.router.navigate(['/home']);
+
+            // Vérifier que le token est présent
+            if (!response.access_token) {
+              console.error('No access token in response');
+              return; // Retourne ici pour éviter d'exécuter le reste du code
+            }
+
+            // Décoder le token
+            try {
+              const decodedToken: any = jwtDecode(response.access_token);
+              console.log('Decoded Token:', decodedToken);
+
+              // Vérifier que le rôle est présent
+              if (!decodedToken.role) {
+                console.error('No role in decoded token');
+                return; // Retourne ici pour éviter d'exécuter le reste du code
+              }
+              localStorage.setItem('access-token', response.access_token);
+              // Stocker le rôle dans le localStorage
+              const userRole = decodedToken.role;
+              console.log('User role to store:', userRole);
+              localStorage.setItem('userRole', userRole);
+
+              const userName = decodedToken.username;
+              console.log('User role to store:', userName);
+              localStorage.setItem('userName', userName);
+
+              console.log(
+                'User role stored in localStorage:',
+                localStorage.getItem('userRole')
+              );
+
+              // Rediriger vers la page d'accueil (sans return)
+              this.router.navigate(['/home']);
+            } catch (error) {
+              console.error('Error decoding token:', error);
+            }
           },
           error: (error: any) => {
             this.loginError = true;
@@ -74,6 +110,6 @@ export class LoginComponent implements OnInit {
         this.loginError = true;
       }
       this.spinner.hide();
-    }, 300); // Simulate a delay for demonstration purposes
+    }, 300); // Simuler un délai pour la démonstration
   }
 }
