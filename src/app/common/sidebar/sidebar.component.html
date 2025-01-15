@@ -5,7 +5,7 @@
     <!-- Liens visibles pour tous les rôles -->
     <li class="nav-item">
       <a class="nav-link collapsed" routerLink="home" routerLinkActive="active">
-        <i class="bi bi-grid"></i>
+        <i class="fas fa-th"></i>
         <span>Home</span>
       </a>
     </li>
@@ -16,7 +16,7 @@
         routerLink="profile"
         routerLinkActive="active"
       >
-        <i class="bi bi-journal-text"></i><span>Profile</span>
+        <i class="fas fa-book"></i><span>Profile</span>
       </a>
     </li>
     <li class="nav-item" *ngIf="userRole === 'club'">
@@ -25,12 +25,12 @@
         routerLink="dashboardClub"
         routerLinkActive="active"
       >
-        <i class="bi bi-bar-chart"></i><span>Dashboard</span>
+        <i class="fas fa-chart-bar"></i><span>Dashboard</span>
       </a>
     </li>
     <li class="nav-item">
       <a class="nav-link collapsed" routerLink="club" routerLinkActive="active">
-        <i class="bi bi-menu-button-wide"></i><span>Clubs</span>
+        <i class="fas fa-bars"></i><span>Clubs</span>
       </a>
     </li>
 
@@ -41,7 +41,7 @@
         routerLink="student"
         routerLinkActive="active"
       >
-        <i class="bi bi-journal-text"></i><span>Students</span>
+        <i class="fas fa-book"></i><span>Students</span>
       </a>
     </li>
 
@@ -51,7 +51,7 @@
         routerLink="classroom"
         routerLinkActive="active"
       >
-        <i class="bi bi-journal-text"></i><span>Classroom</span>
+        <i class="fas fa-book"></i><span>Classroom</span>
       </a>
     </li>
     <li class="nav-item" *ngIf="userRole === 'admin'">
@@ -60,7 +60,7 @@
         routerLink="dashboard"
         routerLinkActive="active"
       >
-        <i class="bi bi-bar-chart"></i><span>Dashboard</span>
+        <i class="fas fa-chart-bar"></i><span>Dashboard</span>
       </a>
     </li>
     <!-- Lien "Request Event" visible uniquement pour Admin et Club -->
@@ -70,7 +70,7 @@
         routerLink="RequestEvent"
         routerLinkActive="active"
       >
-        <i class="bi bi-calendar-plus"></i><span>Request an Event</span>
+        <i class="fas fa-calendar-plus"></i><span>Request an Event</span>
       </a>
     </li>
     <li class="nav-item" *ngIf="userRole === 'admin' || userRole === 'club'">
@@ -79,7 +79,7 @@
         routerLink="RequestClassroom"
         routerLinkActive="active"
       >
-        <i class="bi bi-calendar-plus"></i><span>Request a Classroom</span>
+        <i class="fas fa-calendar-plus"></i><span>Request a Classroom</span>
       </a>
     </li>
   </ul>

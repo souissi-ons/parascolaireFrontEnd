@@ -1,1 +1,62 @@
-<p>home works!</p>
+<ngx-spinner
+  bdColor="rgba(51,51,51,0.8)"
+  size="medium"
+  color="#fff"
+  type="ball-spin"
+>
+  <p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>
+
+<div>
+  <!-- Affichage des événements -->
+  <div *ngFor="let event of events" class="card mb-3">
+    <div class="row g-0">
+      <div class="col-md-4">
+        <img
+          src="event.avif"
+          class="img-fluid rounded-start"
+          alt="Event Image"
+        />
+      </div>
+      <div class="col-md-8">
+        <div class="card-body">
+          <h5 class="card-title">{{ event.name }}</h5>
+          <p class="card-text">
+            <strong>Date Début:</strong> {{ event.startDateTime }}
+            <br />
+            <strong>Date Fin:</strong> {{ event.endDateTime }}
+            <br />
+            <strong>Organizers:</strong>
+            {{ event.organizerId }}
+            <br />
+            <strong>Description:</strong>
+            {{ event.description }}
+          </p>
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">
+              <i class="far fa-clock me-1"></i>
+              Added on: {{ event.createdAt | date : "medium" }}
+            </small>
+            <!-- <button
+              *ngIf="userRole === 'admin'"
+              class="btn btn-danger btn-sm"
+              (click)="deleteEvent(event.id)"
+            >
+              <i class="fas fa-trash-alt"></i>
+            </button> -->
+            <!-- <button
+              *ngIf="userRole === 'membre' || userRole === 'student'"
+              (click)="favoriteEvent(event.id)"
+              style="border: none; background: transparent; padding: 0"
+            >
+              <i
+                class="far fa-star"
+                [class.favorited]="favorites[event.id]"
+              ></i>
+            </button> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

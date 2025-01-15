@@ -1,101 +1,180 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
+import { RequestClassroomService } from '../../services/request-classroom.service';
+import {
+  Classroom,
+  CreateRequestClassroomDto,
+  UpdateRequestClassroomDto,
+} from '../../models/classroom.type';
+import { ClassroomService } from '../../services/classroom.service';
 
 @Component({
   selector: 'app-request-classroom',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, DatePipe],
   templateUrl: './request-classroom.component.html',
   styleUrls: ['./request-classroom.component.css'],
 })
 export class RequestClassroomComponent implements OnInit {
-  // Nouvelle demande de salle
-  newRequest = {
-    roomNumber: '',
-    purpose: '',
-    startDate: '',
-    endDate: '',
-    requestStatus: 'In Progress', // Statut par défaut
+  // New request object
+  newRequest: CreateRequestClassroomDto = {
+    startDateTime: new Date(),
+    endDateTime: new Date(),
+    roomId: '',
+    requestedBy: '',
+    reason: '',
+    status: 'pending',
   };
 
-  // Liste des salles disponibles
-  classrooms = [
-    { roomNumber: '101', capacity: 30 },
-    { roomNumber: '102', capacity: 20 },
-    { roomNumber: '103', capacity: 50 },
-    { roomNumber: '104', capacity: 40 },
-  ];
+  // List of available classrooms
+  classrooms: Classroom[] = [];
 
-  // Liste des demandes
+  // List of requests
   requests: any[] = [];
-  userRole: string = ''; // Rôle de l'utilisateur (admin ou club)
-  showForm = false; // Contrôle la visibilité du formulaire
+  userRole: string = ''; // User role (admin or club)
+  showForm = false; // Controls form visibility
   formContainer: ElementRef | undefined;
 
-  ngOnInit(): void {
-    // Récupérer toutes les demandes du localStorage
-    const savedRequests = localStorage.getItem('requests');
-    if (savedRequests) {
-      this.requests = JSON.parse(savedRequests);
-    }
+  constructor(
+    private requestClassroomService: RequestClassroomService,
+    private classroomService: ClassroomService
+  ) {}
 
-    // Vérifier le rôle de l'utilisateur
-    this.userRole = localStorage.getItem('userRole') || ''; // admin ou club
+  ngOnInit(): void {
+    this.userRole = localStorage.getItem('userRole') || '';
+    if (this.userRole === 'club') {
+      this.loadMyRequestClassrooms();
+    } else {
+      this.loadRequestClassrooms();
+    }
+    this.loadClassrooms();
   }
 
+  // Load all request classrooms
+  loadRequestClassrooms(): void {
+    this.requestClassroomService.getAllRequestClassrooms().subscribe(
+      (data) => {
+        this.requests = data;
+      },
+      (error) => {
+        console.error('Error loading request classrooms', error);
+      }
+    );
+  }
+  loadMyRequestClassrooms(): void {
+    this.requestClassroomService
+      .getMyRequestClassrooms(localStorage.getItem('id') || '')
+      .subscribe(
+        (data) => {
+          this.requests = data;
+        },
+        (error) => {
+          console.error('Error loading request classrooms', error);
+        }
+      );
+  }
+  // Toggle form visibility
   toggleForm(): void {
     this.showForm = !this.showForm;
   }
-  closeFormOnOutsideClick(event: MouseEvent) {
-    // Vérifiez si l'événement vient de l'extérieur
-    this.showForm = false;
+
+  // Close form when clicking outside
+  closeFormOnOutsideClick(event: Event): void {
+    if ((event.target as HTMLElement).classList.contains('modal')) {
+      this.showForm = false;
+    }
   }
 
+  loadClassrooms(): void {
+    this.classroomService.getAllClassrooms().subscribe({
+      next: (classrooms) => {
+        this.classrooms = classrooms;
+      },
+      error: (error) => {
+        console.error('Erreur lors du chargement des salles de classe:', error);
+      },
+    });
+  }
   onSubmitRequest(): void {
-    // Vérifications
     if (
-      !this.newRequest.roomNumber ||
-      !this.newRequest.purpose ||
-      !this.newRequest.startDate ||
-      !this.newRequest.endDate
+      !this.newRequest.roomId ||
+      !this.newRequest.reason ||
+      !this.newRequest.startDateTime ||
+      !this.newRequest.endDateTime
     ) {
-      alert('Veuillez remplir tous les champs obligatoires !');
+      alert('Please fill all required fields!');
       return;
     }
-
-   
-    // Ajouter la demande à la liste
-    this.requests.push({ ...this.newRequest, createdBy: 'club' });
-    this.saveRequests();
-    this.resetForm();
+    this.newRequest.requestedBy = localStorage.getItem('id') || '';
+    this.requestClassroomService
+      .createRequestClassroom(this.newRequest)
+      .subscribe(
+        (response) => {
+          console.log('Request created successfully', response);
+          this.loadRequestClassrooms(); // Refresh the list
+          this.resetForm(); // Reset the form
+        },
+        (error) => {
+          console.error('Error creating request', error);
+        }
+      );
   }
 
-  saveRequests(): void {
-    // Sauvegarder les demandes dans le localStorage
-    localStorage.setItem('requests', JSON.stringify(this.requests));
-  }
-
+  // Reset form after submission
   resetForm(): void {
-    // Réinitialiser le formulaire après soumission
     this.newRequest = {
-      roomNumber: '',
-      purpose: '',
-      startDate: '',
-      endDate: '',
-      requestStatus: 'In Progress',
+      startDateTime: new Date(),
+      endDateTime: new Date(),
+      roomId: '',
+      requestedBy: '',
+      reason: '',
+      status: 'pending',
     };
     this.showForm = false;
   }
 
+  // Change request status (admin only)
   changeRequestStatus(request: any, newStatus: string): void {
-    // Modifier le statut de la demande
-    request.requestStatus = newStatus;
-    this.saveRequests();
+    const updateRequest: UpdateRequestClassroomDto = {
+      status: newStatus,
+    };
+
+    this.requestClassroomService
+      .updateRequestClassroom(request._id, updateRequest)
+      .subscribe(
+        (response) => {
+          console.log('Request status updated successfully', response);
+          this.loadRequestClassrooms(); // Refresh the list
+        },
+        (error) => {
+          console.error('Error updating request status', error);
+        }
+      );
   }
+
+  // Delete a request (admin only)
+  deleteRequest(requestId: string): void {
+    this.requestClassroomService.deleteRequestClassroom(requestId).subscribe(
+      (response) => {
+        console.log('Request deleted successfully', response);
+        this.loadRequestClassrooms(); // Refresh the list
+      },
+      (error) => {
+        console.error('Error deleting request', error);
+      }
+    );
+  }
+
+  // Handle clicks outside the form
   @HostListener('document:click', ['$event'])
-  onClickOutside(event: MouseEvent) {
-    if (this.showForm && this.formContainer && this.formContainer.nativeElement && !this.formContainer.nativeElement.contains(event.target)) {
+  onClickOutside(event: MouseEvent): void {
+    if (
+      this.showForm &&
+      this.formContainer &&
+      this.formContainer.nativeElement &&
+      !this.formContainer.nativeElement.contains(event.target)
+    ) {
       this.showForm = false;
     }
   }

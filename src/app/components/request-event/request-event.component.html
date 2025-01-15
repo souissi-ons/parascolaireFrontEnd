@@ -13,34 +13,49 @@
 
   <!-- Conditional display of the form -->
   <div *ngIf="showForm" class="modal" (click)="closeFormOnOutsideClick($event)">
-    <div class="card" (click)="$event.stopPropagation()" >
+    <div class="card" (click)="$event.stopPropagation()">
       <div class="card-body">
         <h5 class="card-title">Event</h5>
         <!-- Event Request Form -->
-        <form (ngSubmit)="onSubmitEvent()">
+        <form [formGroup]="eventForm" (ngSubmit)="onSubmitEvent()">
+          <!-- Event Name -->
           <div class="form-group">
             <label for="eventName">Event Name:</label>
             <input
               type="text"
               id="eventName"
               class="form-control"
-              [(ngModel)]="newEvent.name"
-              name="name"
+              formControlName="name"
               placeholder="Enter event name"
               required
             />
+            <div
+              *ngIf="
+                eventForm.get('name')?.invalid && eventForm.get('name')?.touched
+              "
+            >
+              <small class="text-danger">Event name is required.</small>
+            </div>
           </div>
 
+          <!-- Start Date and Time -->
           <div class="form-group">
             <label for="startDate">Start Date:</label>
             <input
               type="date"
               id="startDate"
               class="form-control"
-              [(ngModel)]="newEvent.startDate"
-              name="startDate"
+              formControlName="startDate"
               required
             />
+            <div
+              *ngIf="
+                eventForm.get('startDate')?.invalid &&
+                eventForm.get('startDate')?.touched
+              "
+            >
+              <small class="text-danger">Start date is required.</small>
+            </div>
           </div>
 
           <div class="form-group">
@@ -49,22 +64,37 @@
               type="time"
               id="startTime"
               class="form-control"
-              [(ngModel)]="newEvent.startTime"
-              name="startTime"
+              formControlName="startTime"
               required
             />
+            <div
+              *ngIf="
+                eventForm.get('startTime')?.invalid &&
+                eventForm.get('startTime')?.touched
+              "
+            >
+              <small class="text-danger">Start time is required.</small>
+            </div>
           </div>
 
+          <!-- End Date and Time -->
           <div class="form-group">
             <label for="endDate">End Date:</label>
             <input
               type="date"
               id="endDate"
               class="form-control"
-              [(ngModel)]="newEvent.endDate"
-              name="endDate"
+              formControlName="endDate"
               required
             />
+            <div
+              *ngIf="
+                eventForm.get('endDate')?.invalid &&
+                eventForm.get('endDate')?.touched
+              "
+            >
+              <small class="text-danger">End date is required.</small>
+            </div>
           </div>
 
           <div class="form-group">
@@ -73,24 +103,67 @@
               type="time"
               id="endTime"
               class="form-control"
-              [(ngModel)]="newEvent.endTime"
-              name="endTime"
+              formControlName="endTime"
               required
             />
+            <div
+              *ngIf="
+                eventForm.get('endTime')?.invalid &&
+                eventForm.get('endTime')?.touched
+              "
+            >
+              <small class="text-danger">End time is required.</small>
+            </div>
           </div>
 
+          <!-- Event Description -->
           <div class="form-group">
             <label for="eventDescription">Event Description:</label>
             <textarea
               id="eventDescription"
               class="form-control"
-              [(ngModel)]="newEvent.description"
-              name="description"
+              formControlName="description"
               placeholder="Enter event description"
               required
             ></textarea>
+            <div
+              *ngIf="
+                eventForm.get('description')?.invalid &&
+                eventForm.get('description')?.touched
+              "
+            >
+              <small class="text-danger">Description is required.</small>
+            </div>
           </div>
 
+          <!-- Classroom Selection -->
+          <div class="form-group">
+            <label for="classroom">Classroom:</label>
+            <select
+              id="classroom"
+              class="form-control"
+              formControlName="classroomId"
+              required
+            >
+              <option value="" disabled>Select a classroom</option>
+              <option
+                *ngFor="let classroom of classrooms"
+                [value]="classroom._id"
+              >
+                {{ classroom.num }}
+              </option>
+            </select>
+            <div
+              *ngIf="
+                eventForm.get('classroomId')?.invalid &&
+                eventForm.get('classroomId')?.touched
+              "
+            >
+              <small class="text-danger">Classroom is required.</small>
+            </div>
+          </div>
+
+          <!-- Event Image -->
           <div class="form-group">
             <label for="eventImage">Event Image:</label>
             <input
@@ -101,6 +174,7 @@
             />
           </div>
 
+          <!-- Submit Button -->
           <button type="submit" class="btn btn-primary">Submit</button>
         </form>
         <!-- End Event Request Form -->
@@ -122,26 +196,26 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngIf="events.length === 0">
+          <tr *ngIf="userEvents.length === 0">
             <td colspan="4" class="text-center">You have no requests yet!</td>
           </tr>
-          <tr *ngFor="let event of events">
+          <tr *ngFor="let event of userEvents">
             <td>{{ event.name }}</td>
-            <td>{{ event.startDate }}</td>
-            <td>{{ event.endDate }}</td>
+            <td>{{ event.startDateTime | date }}</td>
+            <td>{{ event.endDateTime | date }}</td>
             <td>
               <span
-                *ngIf="event.requestStatus === 'In Progress'"
+                *ngIf="event.status === 'pending'"
                 class="badge badge-warning"
                 ><i class="fas fa-sync-alt fa-spin"></i
               ></span>
               <span
-                *ngIf="event.requestStatus === 'Accepted'"
+                *ngIf="event.status === 'confirmed'"
                 class="badge badge-success"
                 ><i class="fas fa-thumbs-up"></i>
               </span>
               <span
-                *ngIf="event.requestStatus === 'Rejected'"
+                *ngIf="event.status === 'refused'"
                 class="badge badge-danger"
               >
                 <i class="fas fa-thumbs-down"></i
@@ -172,21 +246,21 @@
           </tr>
           <tr *ngFor="let event of events">
             <td>{{ event.name }}</td>
-            <td>{{ event.startDate }}</td>
-            <td>{{ event.endDate }}</td>
+            <td>{{ event.startDateTime }}</td>
+            <td>{{ event.endDateTime }}</td>
             <td>
               <span
-                *ngIf="event.requestStatus === 'In Progress'"
+                *ngIf="event.status === 'pending'"
                 class="badge badge-warning"
                 ><i class="fas fa-sync-alt fa-spin"></i
               ></span>
               <span
-                *ngIf="event.requestStatus === 'Accepted'"
+                *ngIf="event.status === 'confirmed'"
                 class="badge badge-success"
                 ><i class="fas fa-thumbs-up"></i
               ></span>
               <span
-                *ngIf="event.requestStatus === 'Rejected'"
+                *ngIf="event.status === 'refused'"
                 class="badge badge-danger"
               >
                 <i class="fas fa-thumbs-down"></i
@@ -194,15 +268,15 @@
             </td>
             <td>
               <button
-                *ngIf="event.requestStatus === 'In Progress'"
-                (click)="changeRequestStatus(event, 'Accepted')"
+                *ngIf="event.status === 'pending'"
+                (click)="changeRequestStatus(event, 'confirmed')"
                 class="btn btn-success"
               >
                 Accept
               </button>
               <button
-                *ngIf="event.requestStatus === 'In Progress'"
-                (click)="changeRequestStatus(event, 'Rejected')"
+                *ngIf="event.status === 'pending'"
+                (click)="changeRequestStatus(event, 'refused')"
                 class="btn btn-danger"
               >
                 Reject

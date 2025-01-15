@@ -1,140 +1,174 @@
-import { Component, HostListener, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Classroom } from '../../models/classroom.type';
+import { EventService } from '../../services/event.service';
+import { ClassroomService } from '../../services/classroom.service';
+import { EventReq } from '../../models/requestEvent';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-request-event',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './request-event.component.html',
   styleUrls: ['./request-event.component.css'],
 })
 export class RequestEventComponent implements OnInit {
-  // New Event
-  newEvent = {
-    name: '',
-    startDate: '',
-    startTime: '',
-    endDate: '',
-    endTime: '',
-    imageUrl: '',
-    description: '',
-    requestStatus: 'In Progress', // Default status is 'In Progress'
-  };
+  eventForm: FormGroup; // Formulaire réactif
+  showForm: boolean = false; // Contrôle l'affichage du formulaire
+  userRole: any = localStorage.getItem('userRole'); // Rôle de l'utilisateur (à définir dynamiquement)
+  events: EventReq[] = []; // Liste des événements
+  userEvents: EventReq[] = []; // Liste des événements
+  classrooms: Classroom[] = []; // Liste des salles de classe
 
-  // List of Events
-  events: any[] = [];
-  userRole: string = ''; // Role of the user (admin or club)
-  showForm = false; // Control form visibility
-  formClicked = false; // Control form visibility
-  eventService: any;
-  @ViewChild('formContainer') formContainer!: ElementRef;
-
-  ngOnInit(): void {
-    // Récupérer tous les événements du localStorage
-    const savedEvents = localStorage.getItem('events');
-    if (savedEvents) {
-      this.events = JSON.parse(savedEvents);
-    }
-
-    // Vérifier le rôle de l'utilisateur (admin ou club)
-    this.userRole = localStorage.getItem('userRole') || ''; // admin ou club
+  constructor(
+    private fb: FormBuilder,
+    private eventService: EventService,
+    private classroomService: ClassroomService // Injecter le service ClassroomService
+  ) {
+    // Initialisation du formulaire
+    this.eventForm = this.fb.group({
+      name: ['', Validators.required],
+      startDate: ['', Validators.required],
+      startTime: ['', Validators.required],
+      endDate: ['', Validators.required],
+      endTime: ['', Validators.required],
+      description: ['', Validators.required],
+      classroomId: ['', Validators.required], // Ajouter un contrôle pour la salle de classe
+      imageUrl: [''], // Optionnel
+    });
   }
 
+  ngOnInit(): void {
+    this.loadEvents(); // Charger les événements
+    this.loadClassrooms(); // Charger les salles de classe
+    this.loadUserEvents();
+  }
+
+  // Charger les événements
+  loadEvents(): void {
+    this.eventService.findAllRequest().subscribe({
+      next: (data: any) => {
+        this.events = data;
+      },
+      error: (err: Error) => {
+        console.error('Error fetching events:', err);
+      },
+    });
+  }
+
+  loadUserEvents(): void {
+    const userId = localStorage.getItem('id');
+    this.eventService.findAllUserRequest(userId || '').subscribe({
+      next: (data: any) => {
+        this.userEvents = data;
+      },
+      error: (err: Error) => {
+        console.error('Error fetching events:', err);
+      },
+    });
+  }
+
+  // Charger les salles de classe
+  loadClassrooms(): void {
+    this.classroomService.getAllClassrooms().subscribe({
+      next: (data: any) => {
+        this.classrooms = data; // Mettre à jour la liste des salles de classe
+      },
+      error: (err: Error) => {
+        console.error('Error fetching classrooms:', err);
+      },
+    });
+  }
+
+  // Afficher ou masquer le formulaire
   toggleForm(): void {
     this.showForm = !this.showForm;
   }
 
-  closeFormOnOutsideClick(event: MouseEvent) {
-    // Vérifiez si l'événement vient de l'extérieur
-    this.showForm = false;
-  }
-
-  onSubmitEvent(): void {
-    if (
-      !this.newEvent.name ||
-      !this.newEvent.startDate ||
-      !this.newEvent.startTime ||
-      !this.newEvent.endDate ||
-      !this.newEvent.endTime ||
-      !this.newEvent.description
-    ) {
-      alert('Please fill in all required fields!');
-      return;
-    }
-
-    // Vérifier si un événement identique existe déjà
-    if (
-      this.events.some(
-        (event) =>
-          event.name === this.newEvent.name &&
-          event.startDate === this.newEvent.startDate
-      )
-    ) {
-      alert('This event already exists!');
-      return;
-    }
-
-    // Ajouter l'événement à la liste des événements
-    this.events.push({ ...this.newEvent, createdBy: 'club' });
-    this.saveEvents();
-    this.resetForm();
-  }
-
-  onFileChange(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e: any) => {
-        this.newEvent.imageUrl = e.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  saveEvents(): void {
-    // Sauvegarder tous les événements dans le localStorage
-    localStorage.setItem('events', JSON.stringify(this.events));
-  }
-
-  resetForm(): void {
-    // Reset the form values after submission
-    this.newEvent = {
-      name: '',
-      startDate: '',
-      startTime: '',
-      endDate: '',
-      endTime: '',
-      imageUrl: '',
-      description: '',
-      requestStatus: 'In Progress',
-    };
-    this.showForm = false;
-  }
-
-  changeRequestStatus(event: any, newStatus: string): void {
-    // Modifier le statut de l'événement
-    event.requestStatus = newStatus;
-
-    // Sauvegarder les événements après modification
-    this.saveEvents();
-
-    // Optionnellement, envoyer la mise à jour au backend (si vous avez une API)
-    this.eventService.updateEventStatus(event._id, newStatus).subscribe(
-      (response: any) => {
-        console.log('Event status updated:', response);
-        // Vous pouvez afficher un message de succès ou de confirmation ici
-      },
-      (error: any) => {
-        console.error('Error updating event status:', error);
-        // Gérez l'erreur de manière appropriée (par exemple, afficher un message d'erreur)
-      }
-    );
-  }
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: MouseEvent) {
-    if (this.showForm && this.formContainer && this.formContainer.nativeElement && !this.formContainer.nativeElement.contains(event.target)) {
+  // Fermer le formulaire en cliquant à l'extérieur
+  closeFormOnOutsideClick(event: Event): void {
+    if ((event.target as HTMLElement).classList.contains('modal')) {
       this.showForm = false;
+    }
+  }
+
+  // Gérer la soumission du formulaire
+  onSubmitEvent(): void {
+    if (this.eventForm.invalid) {
+      console.log('Please fill in all required fields!');
+      return;
+    }
+
+    // Combiner la date et l'heure de début et de fin
+    const startDateTime = new Date(
+      `${this.eventForm.value.startDate}T${this.eventForm.value.startTime}`
+    );
+    const endDateTime = new Date(
+      `${this.eventForm.value.endDate}T${this.eventForm.value.endTime}`
+    );
+
+    // Créer un nouvel événement
+    const newEvent: EventReq = {
+      ...this.eventForm.value,
+      startDateTime: startDateTime,
+      endDateTime: endDateTime,
+      roomId: this.eventForm.value.classroomId, // Utiliser l'ID de la salle de classe sélectionnée
+      organizerId: localStorage.getItem('id') || '', // ID de l'organisateur
+      requestStatus: 'pending', // Statut par défaut
+      private: false, // Par défaut, l'événement n'est pas privé
+    };
+
+    // Appeler le service pour créer l'événement
+    this.eventService.createRequestEvent(newEvent).subscribe({
+      next: (response: any) => {
+        console.log('Event created successfully:', response);
+        this.loadUserEvents(); // Recharger la liste des événements
+        this.showForm = false; // Masquer le formulaire
+        this.eventForm.reset(); // Réinitialiser le formulaire
+      },
+      error: (err: Error) => {
+        console.error('Error creating event:', err);
+      },
+    });
+  }
+
+  // Gérer le changement de fichier (image)
+  onFileChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      // Vous pouvez traiter le fichier ici (par exemple, l'uploader et récupérer l'URL)
+    }
+  }
+
+  // Accepter une demande d'événement
+  changeRequestStatus(event: EventReq, status: 'confirmed' | 'refused'): void {
+    if (status === 'confirmed') {
+      this.eventService.acceptEvent(event._id!).subscribe({
+        next: (updatedEvent: EventReq) => {
+          console.log('Event accepted:', updatedEvent);
+          this.loadEvents(); // Recharger la liste des événements
+        },
+        error: (err: Error) => {
+          console.error('Error accepting event:', err);
+        },
+      });
+    } else if (status === 'refused') {
+      this.eventService.rejectEvent(event._id!).subscribe({
+        next: (updatedEvent: EventReq) => {
+          console.log('Event rejected:', updatedEvent);
+          this.loadEvents(); // Recharger la liste des événements
+        },
+        error: (err: Error) => {
+          console.error('Error rejecting event:', err);
+        },
+      });
     }
   }
 }

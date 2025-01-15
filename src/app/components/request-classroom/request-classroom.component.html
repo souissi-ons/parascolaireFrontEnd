@@ -20,26 +20,26 @@
           <div class="form-group">
             <label for="roomNumber">Room Number:</label>
             <select
-              id="roomNumber"
+              id="roomId"
               class="form-control"
-              [(ngModel)]="newRequest.roomNumber"
-              name="roomNumber"
+              [(ngModel)]="newRequest.roomId"
+              name="roomId"
               required
             >
-              <option *ngFor="let room of classrooms" [value]="room.roomNumber">
-                {{ room.roomNumber }} (Capacity: {{ room.capacity }}) -
+              <option *ngFor="let room of classrooms" [value]="room._id">
+                {{ room.num }} (Capacity: {{ room.capacity }}) -
               </option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="purpose">Purpose:</label>
+            <label for="reason">reason:</label>
             <textarea
-              id="purpose"
+              id="reason"
               class="form-control"
-              [(ngModel)]="newRequest.purpose"
-              name="purpose"
-              placeholder="Enter the purpose of the request"
+              [(ngModel)]="newRequest.reason"
+              name="reason"
+              placeholder="Enter the reason of the request"
               required
             ></textarea>
           </div>
@@ -48,10 +48,10 @@
             <label for="startDate">Start Date:</label>
             <input
               type="date"
-              id="startDate"
+              id="startDateTime"
               class="form-control"
-              [(ngModel)]="newRequest.startDate"
-              name="startDate"
+              [(ngModel)]="newRequest.startDateTime"
+              name="startDateTime"
               required
             />
           </div>
@@ -60,10 +60,10 @@
             <label for="endDate">End Date:</label>
             <input
               type="date"
-              id="endDate"
+              id="endDateTime"
               class="form-control"
-              [(ngModel)]="newRequest.endDate"
-              name="endDate"
+              [(ngModel)]="newRequest.endDateTime"
+              name="endDateTime"
               required
             />
           </div>
@@ -93,25 +93,25 @@
             <td colspan="5" class="text-center">No requests yet!</td>
           </tr>
           <tr *ngFor="let request of requests">
-            <td>{{ request.roomNumber }}</td>
-            <td>{{ request.purpose }}</td>
-            <td>{{ request.startDate }}</td>
-            <td>{{ request.endDate }}</td>
+            <td>{{ request.roomId }}</td>
+            <td>{{ request.reason }}</td>
+            <td>{{ request.startDateTime | date : "medium" }}</td>
+            <td>{{ request.endDateTime | date : "medium" }}</td>
             <td>
               <span
-                *ngIf="request.requestStatus === 'In Progress'"
+                *ngIf="request.status === 'pending'"
                 class="badge badge-warning"
               >
                 <i class="fas fa-sync-alt fa-spin"></i>
               </span>
               <span
-                *ngIf="request.requestStatus === 'Accepted'"
+                *ngIf="request.status === 'confirmed'"
                 class="badge badge-success"
               >
                 <i class="fas fa-thumbs-up"></i>
               </span>
               <span
-                *ngIf="request.requestStatus === 'Rejected'"
+                *ngIf="request.status === 'refused'"
                 class="badge badge-danger"
               >
                 <i class="fas fa-thumbs-down"></i>
@@ -131,7 +131,7 @@
         <thead>
           <tr>
             <th>Room</th>
-            <th>Purpose</th>
+            <th>reason</th>
             <th>Start Date</th>
             <th>End Date</th>
             <th>Status</th>
@@ -143,25 +143,25 @@
             <td colspan="6" class="text-center">No requests available.</td>
           </tr>
           <tr *ngFor="let request of requests">
-            <td>{{ request.roomNumber }}</td>
-            <td>{{ request.purpose }}</td>
-            <td>{{ request.startDate }}</td>
-            <td>{{ request.endDate }}</td>
+            <td>{{ request.roomId }}</td>
+            <td>{{ request.reason }}</td>
+            <td>{{ request.startDateTime | date : "medium" }}</td>
+            <td>{{ request.endDateTime | date : "medium" }}</td>
             <td>
               <span
-                *ngIf="request.requestStatus === 'In Progress'"
+                *ngIf="request.status === 'pending'"
                 class="badge badge-warning"
               >
                 <i class="fas fa-sync-alt fa-spin"></i>
               </span>
               <span
-                *ngIf="request.requestStatus === 'Accepted'"
+                *ngIf="request.status === 'confirmed'"
                 class="badge badge-success"
               >
                 <i class="fas fa-thumbs-up"></i>
               </span>
               <span
-                *ngIf="request.requestStatus === 'Rejected'"
+                *ngIf="request.status === 'refused'"
                 class="badge badge-danger"
               >
                 <i class="fas fa-thumbs-down"></i>
@@ -170,15 +170,15 @@
             <td>
               <div class="buttons">
                 <button
-                  *ngIf="request.requestStatus === 'In Progress'"
-                  (click)="changeRequestStatus(request, 'Accepted')"
+                  *ngIf="request.status === 'pending'"
+                  (click)="changeRequestStatus(request, 'confirmed')"
                   class="btn btn-success"
                 >
                   Accept
                 </button>
                 <button
-                  *ngIf="request.requestStatus === 'In Progress'"
-                  (click)="changeRequestStatus(request, 'Rejected')"
+                  *ngIf="request.status === 'pending'"
+                  (click)="changeRequestStatus(request, 'refused')"
                   class="btn btn-danger"
                 >
                   Reject

@@ -1,200 +1,220 @@
 /* Base styles */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f7f7f7;
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* Modal Styles */
+  font-family: "Arial", sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+  padding: 0;
+}
+
+/* Modal Styles */
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  overflow-y: auto;
+}
+
+.card {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 30px rgba(1, 41, 112, 0.1);
+  overflow: hidden;
+  width: 80%;
+  max-width: 800px;
+  margin: 20px;
+  max-height: 90vh;
+}
+
+.card-body {
+  padding: 20px;
+  overflow-y: auto; /* Permet le défilement à l'intérieur de la carte */
+  max-height: 70vh;
+}
+
+.card-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.form-control {
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  font-size: 14px;
+  width: 100%;
+  margin-bottom: 15px;
+}
+
+.form-control:focus {
+  border-color: #673ab7;
+  box-shadow: 0 0 5px rgba(103, 58, 183, 0.5);
+}
+
+textarea.form-control {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.btn {
+  border-radius: 5px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background-color: #e1d8f1;
+  color: #673ab7;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #d2b8e3;
+}
+
+/* Add New Club Button */
+.btn-add-new-club {
+  background-color: #e1d8f1;
+  color: #673ab7;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: block;
+  margin: 20px auto;
+  float: right;
+}
+
+.btn-add-new-club:hover {
+  background-color: #d2b8e3;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre subtile sous le tableau */
+  border-radius: 8px; /* Ajoute des coins arrondis pour un effet plus doux */
+  background-color: #fff; /* Assure que le fond du tableau est blanc pour que l'ombre ressorte */
+}
+
+table th,
+table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+table th {
+  background-color: #55b3ff;
+  color: #fff;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table tr:hover {
+  background-color: #ddd;
+  cursor: pointer;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
   .modal {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    overflow-y: auto;
-  }
-  
-  .card {
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 0px 30px rgba(1, 41, 112, 0.1);
-    overflow: hidden;
-    width: 80%;
-    max-width: 800px;
-    margin: 20px;
-    max-height: 90vh;
-  }
-  
-  .card-body {
-    padding: 20px;
-    overflow-y: auto; /* Permet le défilement à l'intérieur de la carte */
-    max-height: 70vh;
-  }
-  
-  .card-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .form-control {
-    border-radius: 5px;
-    border: 1px solid #ccc;
     padding: 10px;
-    font-size: 14px;
-    width: 100%;
-    margin-bottom: 15px;
   }
-  
-  .form-control:focus {
-    border-color: #673ab7;
-    box-shadow: 0 0 5px rgba(103, 58, 183, 0.5);
+
+  .card {
+    width: 95%;
+    margin: 10px;
   }
-  
-  textarea.form-control {
-    resize: vertical;
-    min-height: 100px;
+
+  .card-body {
+    padding: 15px;
   }
-  
+
   .btn {
-    border-radius: 5px;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-  }
-  
-  .btn-primary {
-    background-color: #e1d8f1;
-    color: #673ab7;
-    border: none;
-    transition: all 0.3s ease;
-  }
-  
-  .btn-primary:hover {
-    background-color: #d2b8e3;
-  }
-  
-  /* Add New Club Button */
-  .btn-add-new-club {
-    background-color: #e1d8f1;
-    color: #673ab7;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: block;
-    margin: 20px auto;
-    float: right;
-  }
-  
-  .btn-add-new-club:hover {
-    background-color: #d2b8e3;
-  }
-  table {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombre subtile sous le tableau */
-    border-radius: 8px; /* Ajoute des coins arrondis pour un effet plus doux */
-    background-color: #fff; /* Assure que le fond du tableau est blanc pour que l'ombre ressorte */
   }
-  
-  table th, table td {
-    padding: 12px;
-    text-align: center;
-    border-bottom: 1px solid #ddd;
+}
+
+@media (max-width: 480px) {
+  .form-control {
+    font-size: 12px;
   }
-  
-  table th {
-    background-color: #55b3ff;
-    color: #fff;
-    font-weight: bold;
+
+  .btn-primary {
+    font-size: 14px;
   }
-  
-  table tr:nth-child(even) {
-    background-color: #f2f2f2;
+
+  .card-title {
+    font-size: 16px;
   }
-  
-  table tr:hover {
-    background-color: #ddd;
-    cursor: pointer;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .modal {
-      padding: 10px;
-    }
-  
-    .card {
-      width: 95%;
-      margin: 10px;
-    }
-  
-    .card-body {
-      padding: 15px;
-    }
-  
-    .btn {
-      width: 100%;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .form-control {
-      font-size: 12px;
-    }
-  
-    .btn-primary {
-      font-size: 14px;
-    }
-  
-    .card-title {
-      font-size: 16px;
-    }
-  }
-  .badge {
-    padding: 5px;
-    border-radius: 50%;
-    font-size: 24px; /* Taille d'icône plus grande pour plus de visibilité */
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .badge-warning {
-    background-color: #ffdc60; /* Couleur vive pour "En Cours" */
-  }
-  
-  .badge-success {
-    background-color: #0aa70f; /* Couleur verte pour "Accepté" */
-  }
-  
-  .badge-danger {
-    background-color: #f93f3f;/* Couleur rouge pour "Rejeté" */
-  }
-  
-  .fas {
-    color: white; /* Couleur de l'icône en blanc pour ressortir */
-    font-size: 18px; /* Ajustement de la taille de l'icône */
-  }
-  
-  .fas:hover {
-    transform: scale(1.2); /* Effet de zoom lors du survol de l'icône */
-    transition: transform 0.3s ease-in-out; /* Transition douce */
-  }
-  .buttons {
-    gap: 30px;
-    text-align: center;
-  }
+}
+.badge {
+  padding: 5px;
+  border-radius: 50%;
+  font-size: 24px; /* Taille d'icône plus grande pour plus de visibilité */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.badge-warning {
+  background-color: #ffdc60; /* Couleur vive pour "En Cours" */
+}
+
+.badge-success {
+  background-color: #0aa70f; /* Couleur verte pour "Accepté" */
+}
+
+.badge-danger {
+  background-color: #f93f3f; /* Couleur rouge pour "Rejeté" */
+}
+
+.fas {
+  color: white; /* Couleur de l'icône en blanc pour ressortir */
+  font-size: 18px; /* Ajustement de la taille de l'icône */
+}
+
+.fas:hover {
+  transform: scale(1.2); /* Effet de zoom lors du survol de l'icône */
+  transition: transform 0.3s ease-in-out; /* Transition douce */
+}
+.buttons {
+  gap: 30px;
+  text-align: center;
+}
+
+.custom-alert {
+  background-color: #ffebee; /* Fond rouge clair */
+  color: #c62828; /* Texte rouge foncé */
+  padding: 12px 20px; /* Espacement intérieur */
+  border-radius: 4px; /* Coins arrondis */
+  border: 1px solid #ffebee; /* Bordure rouge clair */
+  font-size: 0.9rem; /* Taille de police */
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Espace entre l'icône et le texte */
+  margin-top: 10px; /* Marge en haut */
+}
+
+.custom-alert.error {
+  background-color: #ffcdd2; /* Fond rouge plus vif pour les erreurs */
+  color: #d32f2f; /* Texte rouge plus foncé */
+  border-color: #ffcdd2; /* Bordure rouge */
+}
