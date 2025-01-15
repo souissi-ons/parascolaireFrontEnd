@@ -87,13 +87,21 @@ export class LoginComponent implements OnInit {
               console.log('User role to store:', userName);
               localStorage.setItem('userName', userName);
 
+              const id = decodedToken.sub;
+              localStorage.setItem('id', id);
+
               console.log(
                 'User role stored in localStorage:',
                 localStorage.getItem('userRole')
               );
 
               // Rediriger vers la page d'accueil (sans return)
-              this.router.navigate(['/home']);
+              if (localStorage.getItem('userRole') == 'admin')
+                this.router.navigate(['/admin/dashboard']);
+              else if (localStorage.getItem('userRole') == 'student')
+                this.router.navigate(['/student/dashboard']);
+              else if (localStorage.getItem('userRole') == 'club')
+                this.router.navigate(['/club/dashboardClub']);
             } catch (error) {
               console.error('Error decoding token:', error);
             }

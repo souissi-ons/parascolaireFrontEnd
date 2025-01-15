@@ -1,0 +1,79 @@
+<div class="row">
+    <!-- Première card : Pie Chart -->
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <div id="pieChart" style="min-height: 400px; height: 100%"></div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Deuxième card : Bar Chart -->
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <div id="barChart" style="min-height: 400px; height: 100%"></div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- 3éme card : Pie Chart -->
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <div id="studentPieChart" style="min-height: 400px; height: 100%"></div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- 4éme card : Donut Chart -->
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <div id="donutChart" style="min-height: 400px; height: 100%"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6" >
+      <div style="display: flex; gap: 20px;">
+      <div class="card" style="width: 48%">
+        <div class="card-body"> 
+          <div class="d-flex justify-content-between align-items-center"  >
+            <div class="icon-container">
+              <i class="fas fa-users" style="font-size: 40px; color: #FF8C00;"></i>
+            </div>
+            <div>
+              <h5 class="card-title">Students | This Year</h5>
+              <h4 class="card-text" style="font-size: 32px;">1244</h4>
+              <p class="card-text" style="color: #FF6347; font-size: 16px;">
+                -12% decrease
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card " style="width: 48%">
+        <div class="card-body"> 
+          <div class="d-flex justify-content-between align-items-center"  >
+            <div class="icon-container">
+              <i class="fas fa-calendar-alt" style="font-size: 40px; color: #f451d8;"></i>
+            </div>
+            <div>
+              <h5 class="card-title">Events | This Year</h5>
+              <h4 class="card-text" style="font-size: 32px;">{{eventCount}}</h4>
+              <p class="card-text" style="color: #f647ff; font-size: 16px;">
+                {{eventPercentage}}% {{eventTrend}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+</div>
+  

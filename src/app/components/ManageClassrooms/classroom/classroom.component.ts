@@ -96,8 +96,16 @@ export class ClassroomComponent implements OnInit, AfterViewInit {
   }
 
   updateClassroom(updatedClassroom: Classroom): void {
+    const newUpdatedClassroom: any = {
+      available: updatedClassroom.available,
+      capacity: updatedClassroom.capacity,
+    };
+
+    if (updatedClassroom.num !== this.selectedClassroom?.num) {
+      newUpdatedClassroom.num = updatedClassroom.num;
+    }
     this.classroomService
-      .updateClassroom(updatedClassroom._id || '', updatedClassroom)
+      .updateClassroom(updatedClassroom._id || '', newUpdatedClassroom)
       .subscribe({
         next: (classroom) => {
           const index = this.listClassroom.findIndex(
@@ -108,6 +116,7 @@ export class ClassroomComponent implements OnInit, AfterViewInit {
             this.dataSource.data = this.listClassroom;
           }
           this.closeEditPopup();
+          this.loadClassrooms();
         },
         error: (error) => {
           console.error(

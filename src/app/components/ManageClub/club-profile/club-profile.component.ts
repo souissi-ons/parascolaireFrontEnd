@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserService } from '../../../services/user.service'; // Utilisation de UserService
+import { UserService } from '../../../services/user.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
@@ -22,11 +22,12 @@ export class ClubProfileComponent implements OnInit {
   userRole: string = '';
   club: any = {};
   clubImage!: SafeUrl;
+  members: any[] = []; // Array to store club members
 
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private userService: UserService, // Utilisation de UserService
+    private userService: UserService,
     private fb: FormBuilder,
     private sanitizer: DomSanitizer
   ) {
@@ -46,7 +47,7 @@ export class ClubProfileComponent implements OnInit {
     this.userRole = localStorage.getItem('userRole') || 'membre';
 
     this.route.params.subscribe((params) => {
-      const clubId = params['clubId']; // L'ID est une chaîne dans MongoDB
+      const clubId = params['clubId'];
       this.loadClubProfile(clubId);
     });
   }
@@ -64,7 +65,8 @@ export class ClubProfileComponent implements OnInit {
           linkedin: club.linkedin || '',
           domaine: club.domaine || '',
         });
-        this.loadClubImage(club._id); // Utilisation de _id au lieu de userId
+        this.loadClubImage(club._id);
+        this.loadClubMembers(club._id); // Load members for the club
       },
       (error) => {
         console.error('Erreur lors du chargement du profil du club', error);
@@ -89,22 +91,38 @@ export class ClubProfileComponent implements OnInit {
     );
   }
 
+  loadClubMembers(clubId: string): void {
+    this.userService.getMembers(clubId).subscribe(
+      (members) => {
+        this.members = members; // Store the members in the component
+      },
+      (error) => {
+        console.error('Erreur lors du chargement des membres du club', error);
+      }
+    );
+  }
+
   onReturnClick(): void {
     this.router.navigate([`/${this.userRole}/club`]);
   }
 
   onSaveChanges(): void {
     if (this.clubForm.valid) {
-      const updatedClub = {
-        ...this.club,
+      const updatedClub: any = {
         fullName: this.clubForm.value.fullName,
-        phone: this.clubForm.value.phone,
-        email: this.clubForm.value.email,
         facebook: this.clubForm.value.facebook,
         instagram: this.clubForm.value.instagram,
         linkedin: this.clubForm.value.linkedin,
         domaine: this.clubForm.value.domaine,
       };
+
+      if (this.clubForm.value.email !== this.club.email) {
+        updatedClub.email = this.clubForm.value.email;
+      }
+
+      if (this.clubForm.value.phone !== this.club.phone) {
+        updatedClub.phone = this.clubForm.value.phone;
+      }
 
       this.userService.updateUser(this.club._id, updatedClub).subscribe(
         (response) => {

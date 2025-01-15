@@ -1,0 +1,193 @@
+<div class="container">
+  <!-- Bouton pour afficher le formulaire -->
+  <div>
+    <button
+      *ngIf="userRole === 'club'"
+      class="btn-add-new-club"
+      (click)="toggleForm()"
+    >
+      Request a Classroom
+    </button>
+  </div>
+  <br /><br />
+
+  <!-- Formulaire de demande de salle -->
+  <div *ngIf="showForm" class="modal" (click)="closeFormOnOutsideClick($event)">
+    <div class="card" (click)="$event.stopPropagation()">
+      <div class="card-body">
+        <h5 class="card-title">Request a Classroom</h5>
+        <form (ngSubmit)="onSubmitRequest()">
+          <div class="form-group">
+            <label for="roomNumber">Room Number:</label>
+            <select
+              id="roomNumber"
+              class="form-control"
+              [(ngModel)]="newRequest.roomNumber"
+              name="roomNumber"
+              required
+            >
+              <option *ngFor="let room of classrooms" [value]="room.roomNumber">
+                {{ room.roomNumber }} (Capacity: {{ room.capacity }}) -
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="purpose">Purpose:</label>
+            <textarea
+              id="purpose"
+              class="form-control"
+              [(ngModel)]="newRequest.purpose"
+              name="purpose"
+              placeholder="Enter the purpose of the request"
+              required
+            ></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="startDate">Start Date:</label>
+            <input
+              type="date"
+              id="startDate"
+              class="form-control"
+              [(ngModel)]="newRequest.startDate"
+              name="startDate"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="endDate">End Date:</label>
+            <input
+              type="date"
+              id="endDate"
+              class="form-control"
+              [(ngModel)]="newRequest.endDate"
+              name="endDate"
+              required
+            />
+          </div>
+
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste des demandes -->
+  <div *ngIf="userRole === 'club'" class="row">
+    <div class="col-lg-12">
+      <h5>Your Requests</h5>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Room</th>
+            <th>Purpose</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="requests.length === 0">
+            <td colspan="5" class="text-center">No requests yet!</td>
+          </tr>
+          <tr *ngFor="let request of requests">
+            <td>{{ request.roomNumber }}</td>
+            <td>{{ request.purpose }}</td>
+            <td>{{ request.startDate }}</td>
+            <td>{{ request.endDate }}</td>
+            <td>
+              <span
+                *ngIf="request.requestStatus === 'In Progress'"
+                class="badge badge-warning"
+              >
+                <i class="fas fa-sync-alt fa-spin"></i>
+              </span>
+              <span
+                *ngIf="request.requestStatus === 'Accepted'"
+                class="badge badge-success"
+              >
+                <i class="fas fa-thumbs-up"></i>
+              </span>
+              <span
+                *ngIf="request.requestStatus === 'Rejected'"
+                class="badge badge-danger"
+              >
+                <i class="fas fa-thumbs-down"></i>
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Section admin -->
+  <div *ngIf="userRole === 'admin'" class="row">
+    <div class="col-lg-12">
+      <h5>Requests Management</h5>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Room</th>
+            <th>Purpose</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="requests.length === 0">
+            <td colspan="6" class="text-center">No requests available.</td>
+          </tr>
+          <tr *ngFor="let request of requests">
+            <td>{{ request.roomNumber }}</td>
+            <td>{{ request.purpose }}</td>
+            <td>{{ request.startDate }}</td>
+            <td>{{ request.endDate }}</td>
+            <td>
+              <span
+                *ngIf="request.requestStatus === 'In Progress'"
+                class="badge badge-warning"
+              >
+                <i class="fas fa-sync-alt fa-spin"></i>
+              </span>
+              <span
+                *ngIf="request.requestStatus === 'Accepted'"
+                class="badge badge-success"
+              >
+                <i class="fas fa-thumbs-up"></i>
+              </span>
+              <span
+                *ngIf="request.requestStatus === 'Rejected'"
+                class="badge badge-danger"
+              >
+                <i class="fas fa-thumbs-down"></i>
+              </span>
+            </td>
+            <td>
+              <div class="buttons">
+                <button
+                  *ngIf="request.requestStatus === 'In Progress'"
+                  (click)="changeRequestStatus(request, 'Accepted')"
+                  class="btn btn-success"
+                >
+                  Accept
+                </button>
+                <button
+                  *ngIf="request.requestStatus === 'In Progress'"
+                  (click)="changeRequestStatus(request, 'Rejected')"
+                  class="btn btn-danger"
+                >
+                  Reject
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

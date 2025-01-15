@@ -1,0 +1,62 @@
+<ngx-spinner
+  bdColor="rgba(51,51,51,0.8)"
+  size="medium"
+  color="#fff"
+  type="ball-spin"
+>
+  <p style="font-size: 20px; color: white">Loading...</p>
+</ngx-spinner>
+<div class="container">
+  <div>
+    <button class="btn-add-new-student" (click)="openPopup()">
+      Add New Student
+    </button>
+  </div>
+  <br />
+  <br />
+
+  <!-- Liste des students -->
+  <div class="mat-elevation-z8 data-table">
+    <table mat-table [dataSource]="dataSource" class="full-width-table" matSort>
+      <!-- fullName Column -->
+      <ng-container matColumnDef="fullName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Full Name</th>
+        <td mat-cell *matCellDef="let student">{{ student.fullName }}</td>
+      </ng-container>
+
+      <!-- email Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Email</th>
+        <td mat-cell *matCellDef="let student">{{ student.email }}</td>
+      </ng-container>
+
+      <!-- Phone Column -->
+      <ng-container matColumnDef="phone">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone</th>
+        <td mat-cell *matCellDef="let student">{{ student.phone }}</td>
+      </ng-container>
+
+      <!-- Définir les lignes -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <app-popup
+      [title]="'Add New Student'"
+      [show]="showPopup"
+      (close)="closePopup()"
+    >
+      <app-add-student (userAdded)="addStudent($event)"></app-add-student>
+    </app-popup>
+
+    <mat-paginator
+      #paginator
+      [pageIndex]="0"
+      [pageSize]="10"
+      [pageSizeOptions]="[5, 10, 20]"
+      showFirstLastButtons
+      aria-label="Select page"
+    >
+    </mat-paginator>
+  </div>
+</div>

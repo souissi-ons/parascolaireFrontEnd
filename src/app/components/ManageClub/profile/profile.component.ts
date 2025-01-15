@@ -13,6 +13,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
+import { UserService } from '../../../services/user.service';
 
 Chart.register(
   LineController,
@@ -24,6 +25,17 @@ Chart.register(
   Tooltip,
   Legend
 );
+
+// Définir une interface pour les étudiants
+interface Student {
+  _id: string;
+  fullName: string;
+  phone: string;
+  email: string;
+  role: string;
+  selected: boolean; // Ajouter cette propriété
+}
+
 @Component({
   selector: 'app-club-profile',
   standalone: true,
@@ -31,28 +43,100 @@ Chart.register(
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css',
 })
-export class ProfileComponent {
-  isModalOpen: boolean | undefined;
-  constructor(private router: Router, private route: ActivatedRoute) {}
+export class ProfileComponent implements OnInit {
+  clubId: any = localStorage.getItem('id');
+  isModalOpen: boolean = false; // Contrôle l'état de la modale
+
+  // Données de l'utilisateur (club) récupérées dynamiquement
+  user: any = {};
+
+  // Liste dynamique des étudiants non membres
+  nonMembers: Student[] = [];
+
+  // Liste dynamique des étudiants ajoutés au club
+  addedStudents: Student[] = [];
+
+  constructor(
+    private router: Router,
+    private route: ActivatedRoute,
+    private userService: UserService
+  ) {}
+
+  ngOnInit() {
+    this.loadUser(); // Charger les données de l'utilisateur (club)
+    this.loadMembers(); // Charger les membres du club
+    this.loadNonMembers(); // Charger les étudiants non membres
+  }
+
+  // Charger les données de l'utilisateur (club) depuis le backend
+  loadUser() {
+    this.userService.findOneUser(this.clubId).subscribe(
+      (user: any) => {
+        this.user = user; // Remplir les données de l'utilisateur
+      },
+      (error) => {
+        console.error('Error loading user:', error);
+      }
+    );
+  }
+
+  // Charger les membres du club depuis le backend
+  loadMembers() {
+    this.userService.getMembers(this.clubId).subscribe(
+      (members: any[]) => {
+        this.addedStudents = members.map((member) => ({
+          _id: member._id,
+          fullName: member.fullName,
+          phone: member.phone,
+          email: member.email,
+          role: member.role,
+          selected: false, // Ajouter cette propriété
+        }));
+      },
+      (error) => {
+        console.error('Error loading members:', error);
+      }
+    );
+  }
+
+  // Charger les étudiants non membres depuis le backend
+  loadNonMembers() {
+    this.userService.getNonMembers(this.clubId).subscribe(
+      (nonMembers: any[]) => {
+        this.nonMembers = nonMembers.map((student) => ({
+          _id: student._id,
+          fullName: student.fullName,
+          phone: student.phone,
+          email: student.email,
+          role: student.role,
+          selected: false, // Ajouter cette propriété
+        }));
+      },
+      (error) => {
+        console.error('Error loading non-members:', error);
+      }
+    );
+  }
+
+  // Retourner à la page précédente
   onReturnClick(): void {
     this.router.navigate(['club']);
   }
-  user = {
-    name: 'Kevin Anderson',
-    role: 'UI Designer',
-    about: 'A passionate UI designer.',
-    phone: '123456789',
-    email: 'kevin@example.com',
-    facebook: 'kevin_fb',
-    instagram: 'kevin_insta',
-    linkedin: 'kevin_linkedin',
-    creationDate: '2022/06/01',
-    imageUrl: '',
-  };
 
+  // Sauvegarder les modifications du profil
   onSaveChanges() {
-    this.activateTab('profile-overview');
+    this.userService.updateUser(this.clubId, this.user).subscribe(
+      (response) => {
+        console.log('User updated successfully:', response);
+        this.activateTab('profile-overview');
+      },
+      (error) => {
+        console.error('Error updating user:', error);
+      }
+    );
   }
+
+  // Gérer le changement de fichier (image de profil)
   onFileChange(event: any) {
     const file = event.target.files[0];
     if (file) {
@@ -64,81 +148,25 @@ export class ProfileComponent {
     }
   }
 
+  // Activer un onglet (non implémenté)
   activateTab(tabId: string) {}
- 
-  changeRole(student: any, newRole: string) {
-    student.role = newRole;
+
+  // Changer le rôle d'un membre
+  changeRole(student: Student, newRole: string) {
+    this.userService
+      .updateMemberRole(this.clubId, student._id, newRole)
+      .subscribe(
+        (response) => {
+          console.log('Role updated successfully:', response);
+          student.role = newRole; // Mettre à jour le rôle localement
+        },
+        (error) => {
+          console.error('Error updating role:', error);
+        }
+      );
   }
-  // Liste statique des étudiants
-  students = [
-    {
-      Firstname: 'Alice ',
-      Lastname: 'Smith',
-      phone: '123456789',
-      email: 'alice@example.com',
-     Birthday: '2005/02/11',
-    role:'Admin',
-      selected: false,
-    },
-    {
-      Firstname: 'Alice ',
-      Lastname: 'Smith',
-      phone: '123456789',
-      email: 'alice@example.com',
-     Birthday: '2005/02/11',
-    role:'Admin',
-      selected: false,
-    },
-    {
-      Firstname: 'Alice ',
-      Lastname: 'Smith',
-      phone: '123456789',
-      email: 'alice@example.com',
-     Birthday: '2005/02/11',
-    role:'Admin',
-      selected: false,
-    },
-    {
-      Firstname: 'Alice ',
-      Lastname: 'Smith',
-      phone: '123456789',
-      email: 'alice@example.com',
-     Birthday: '2005/02/11',
-    role:'Admin',
-      selected: false,
-    },
-    {
-      Firstname: 'Alice ',
-      Lastname: 'Smith',
-      phone: '123456789',
-      email: 'alice@example.com',
-     Birthday: '2005/02/11',
-    role:'Admin',
-      selected: false,
-    },
-    {
-      Firstname: 'Alice ',
-      Lastname: 'Smith',
-      phone: '123456789',
-      email: 'alice@example.com',
-     Birthday: '2005/02/11',
-    role:'Admin',
-      selected: false,
-    },
-    
-  ];
 
-  // Liste dynamique des étudiants ajoutés
-  addedStudents: {
-    Firstname: string;
-    Lastname: string;
-    phone: string;
-   Birthday: string;  
-    email: string;
-    role:string
-  }[] = [];
-
-  // Ouvrir la modale
+  // Ouvrir la modale pour ajouter des membres
   openModal() {
     this.isModalOpen = true;
   }
@@ -147,16 +175,44 @@ export class ProfileComponent {
   closeModal() {
     this.isModalOpen = false;
   }
-  // Gérer la sélection d’un étudiant
-  toggleSelection(student: any) {
+
+  // Gérer la sélection d'un étudiant
+  toggleSelection(student: Student) {
     student.selected = !student.selected;
   }
 
-  // Ajouter les étudiants sélectionnés
+  // Ajouter les étudiants sélectionnés au club
   addSelectedStudents() {
-    const selectedStudents = this.students.filter((s) => s.selected);
-    this.addedStudents.push(...selectedStudents);
-    this.students.forEach((s) => (s.selected = false)); // Réinitialiser les sélections
+    const selectedStudents = this.nonMembers.filter((s) => s.selected);
+
+    selectedStudents.forEach((student) => {
+      this.userService.addMember(this.clubId, student._id, 'member').subscribe(
+        (response) => {
+          console.log('Member added successfully:', response);
+          this.loadMembers(); // Recharger la liste des membres
+          this.loadNonMembers(); // Recharger la liste des non-membres
+        },
+        (error) => {
+          console.error('Error adding member:', error);
+        }
+      );
+    });
+
+    this.nonMembers.forEach((s) => (s.selected = false)); // Réinitialiser les sélections
     this.closeModal();
+  }
+
+  // Supprimer un membre du club
+  removeMember(studentId: string) {
+    this.userService.removeMember(this.clubId, studentId).subscribe(
+      (response) => {
+        console.log('Member removed successfully:', response);
+        this.loadMembers(); // Recharger la liste des membres
+        this.loadNonMembers(); // Recharger la liste des non-membres
+      },
+      (error) => {
+        console.error('Error removing member:', error);
+      }
+    );
   }
 }
